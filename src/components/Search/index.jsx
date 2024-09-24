@@ -1,11 +1,11 @@
 import React from "react";
 import debounce from "lodash.debounce";
-import { SearchContect } from "../../App";
+import { SearchContext } from "../../App";
 import styles from "./Search.module.css";
 
 const Search = () => {
   const [value, setValue] = React.useState('');
-  const { setSearchValue } = React.useContext(SearchContect);
+  const { setSearchValue } = React.useContext(SearchContext);
   const inputRef = React.useRef();
 
   const onClickClear = () => {

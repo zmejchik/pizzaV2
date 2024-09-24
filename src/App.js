@@ -8,14 +8,14 @@ import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
 import Cart from "./pages/Cart";
 
-export const SearchContect = React.createContext("");
+export const SearchContext = React.createContext("");
 
 function App() {
   const [searchValue, setSearchValue] = React.useState("");
 
   return (
     <div className="wrapper">
-      <SearchContect.Provider value={{ searchValue, setSearchValue }}>
+      <SearchContext.Provider value={{ searchValue, setSearchValue }}>
         <Header />
         <div className="content">
           <Routes>
@@ -25,7 +25,7 @@ function App() {
             {/* Add more routes here */}
           </Routes>
         </div>
-      </SearchContect.Provider>
+      </SearchContext.Provider>
     </div>
   );
 }
