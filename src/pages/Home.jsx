@@ -6,7 +6,7 @@ import PizzaBlock from "../components/PizzaBlock";
 import Sceleton from "../components/PizzaBlock/Sceleton";
 import Pagination from "../components/Pagination";
 import { useSelector, useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   selectFilter,
   setCategoryId,
@@ -17,7 +17,8 @@ import { fetchPizzas, selectPizzaData } from "../redux/slices/pizzaSlice";
 import { sortList } from "../components/Sort";
 
 export default function Home() {
-  const { categoryId, sort, currentPage, searchValue } = useSelector(selectFilter);
+  const { categoryId, sort, currentPage, searchValue } =
+    useSelector(selectFilter);
   const { items, status } = useSelector(selectPizzaData);
 
   const dispatch = useDispatch();
@@ -91,7 +92,11 @@ export default function Home() {
     isSearch.current = false;
   }, [categoryId, sort.sortProperty, searchValue, currentPage, getPizzas]);
 
-  const pizzas = items.map((value) => <PizzaBlock key={value.id} {...value} />);
+  const pizzas = items.map((value) => (
+    <Link key={value.id} to={`/pizza/${value.id}`}>
+      <PizzaBlock {...value} />
+    </Link>
+  ));
   const sceletons = [...new Array(6)].map((_, index) => (
     <Sceleton key={index} />
   ));
