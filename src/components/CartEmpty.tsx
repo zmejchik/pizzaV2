@@ -1,13 +1,13 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import cartEmtyImg from "../assets/img/empty-cart.png"
+import cartEmtyImg from "../assets/img/empty-cart.png";
 
-const CartEmpty = () => {
+const CartEmpty: React.FC = () => {
   return (
     <>
       <div className="cart cart--empty">
         <h2>
-          Корзина порожня <icon>😕</icon>
+          Корзина порожня <span>😕</span>
         </h2>
         <p>
           Скоріше за все, Ви не замовляли піцу.
