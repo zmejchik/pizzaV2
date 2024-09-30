@@ -7,16 +7,18 @@ import Sceleton from "../components/PizzaBlock/Sceleton";
 import Pagination from "../components/Pagination";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+
+import { sortList } from "../components/Sort";
+import { useAppDispatch } from "../redux/store";
+import { selectFilter } from "../redux/filter/selectors";
 import {
-  ISort,
-  selectFilter,
   setCategoryId,
   setCurrentPage,
   setFilters,
-} from "../redux/slices/filterSlice";
-import { fetchPizzas, selectPizzaData } from "../redux/slices/pizzaSlice";
-import { sortList } from "../components/Sort";
-import { useAppDispatch } from "../redux/store";
+} from "../redux/filter/slice";
+import { ISort } from "../redux/filter/types";
+import { selectPizzaData } from "../redux/pizza/selectors";
+import { fetchPizzas } from "../redux/pizza/asyncActions";
 
 const Home: React.FC = () => {
   const { categoryId, sort, currentPage, searchValue } =
@@ -31,9 +33,9 @@ const Home: React.FC = () => {
   const isSearch = React.useRef(false);
   const isMounted = React.useRef(false);
 
-  const onСhangeCategory = (idx: number) => {
+  const onСhangeCategory = React.useCallback((idx: number) => {
     dispatch(setCategoryId(idx));
-  };
+  }, []);
 
   const onChangePage = (page: number) => dispatch(setCurrentPage(page));
 
@@ -98,7 +100,7 @@ const Home: React.FC = () => {
     isSearch.current = false;
   }, [categoryId, sort.sortProperty, searchValue, currentPage, getPizzas]);
 
-  const pizzas = items.map((obj: any) => <PizzaBlock {...obj} />);
+  const pizzas = items.map((obj: any) => <PizzaBlock key={obj.id} {...obj} />);
   const sceletons = [...new Array(6)].map((_, index) => (
     <Sceleton key={index} />
   ));
@@ -107,11 +109,8 @@ const Home: React.FC = () => {
     <>
       <div className="container">
         <div className="content__top">
-          <Categories
-            value={categoryId}
-            onClickCategory={(id) => onСhangeCategory(id)}
-          />
-          <Sort />
+          <Categories value={categoryId} onClickCategory={onСhangeCategory} />
+          <Sort value={sort} />
         </div>
         <h2 className="content__title">Всі піцци</h2>
 

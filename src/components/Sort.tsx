@@ -1,10 +1,15 @@
 import React, { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { selectSort, setSort } from "../redux/slices/filterSlice";
+import { useDispatch } from "react-redux";
+import { ISort } from "../redux/filter/types";
+import { setSort } from "../redux/filter/slice";
 
 type SortItem = {
   name: string;
   sortProperty: "rating" | "title" | "price" | "-rating" | "-title" | "-price";
+};
+
+type SortProps = {
+  value: ISort;
 };
 
 export const sortList: SortItem[] = [
@@ -15,9 +20,8 @@ export const sortList: SortItem[] = [
   { name: "алфавіту (за зростанням)", sortProperty: "title" },
   { name: "алфавіту (за спаданням)", sortProperty: "-title" },
 ];
-const Sort: React.FC = () => {
+const Sort: React.FC<SortProps> = React.memo(({ value }) => {
   const dispatch = useDispatch();
-  const sort = useSelector(selectSort);
   const sortRef = React.useRef<HTMLDivElement>(null);
 
   const [open, setOpen] = useState(false);
@@ -55,7 +59,7 @@ const Sort: React.FC = () => {
           />
         </svg>
         <b>Сортування по:</b>
-        <span onClick={() => setOpen(!open)}>{sort.name}</span>
+        <span onClick={() => setOpen(!open)}>{value.name}</span>
       </div>
 
       {open && (
@@ -67,7 +71,7 @@ const Sort: React.FC = () => {
                   key={index}
                   onClick={() => onClickListItem(obj)}
                   className={
-                    sort.sortProperty === obj.sortProperty ? "active" : ""
+                    value.sortProperty === obj.sortProperty ? "active" : ""
                   }
                 >
                   {obj.name}
@@ -78,6 +82,6 @@ const Sort: React.FC = () => {
       )}
     </div>
   );
-};
+});
 
 export default Sort;
