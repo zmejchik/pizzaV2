@@ -5,9 +5,10 @@ import Sort from "../components/Sort";
 import PizzaBlock from "../components/PizzaBlock";
 import Sceleton from "../components/PizzaBlock/Sceleton";
 import Pagination from "../components/Pagination";
-import { useSelector, useDispatch } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import {
+  ISort,
   selectFilter,
   setCategoryId,
   setCurrentPage,
@@ -15,13 +16,14 @@ import {
 } from "../redux/slices/filterSlice";
 import { fetchPizzas, selectPizzaData } from "../redux/slices/pizzaSlice";
 import { sortList } from "../components/Sort";
+import { useAppDispatch } from "../redux/store";
 
 const Home: React.FC = () => {
   const { categoryId, sort, currentPage, searchValue } =
     useSelector(selectFilter);
   const { items, status } = useSelector(selectPizzaData);
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const sortType = sort.sortProperty;
@@ -42,13 +44,12 @@ const Home: React.FC = () => {
     const search = searchValue ? `&search=${searchValue}` : "";
 
     dispatch(
-      // @ts-ignore
       fetchPizzas({
         sortBy,
         order,
         category,
         search,
-        currentPage,
+        currentPage: String(currentPage),
       })
     );
 
@@ -73,14 +74,18 @@ const Home: React.FC = () => {
       const params = qs.parse(window.location.search.substring(1));
       const sort = sortList.find(
         (obj) => obj.sortProperty === params.sortProperty
-      );
+      ) as ISort;
 
-      dispatch(
-        setFilters({
-          ...params,
-          sort,
-        })
-      );
+      if (sort) {
+        dispatch(
+          setFilters({
+            searchValue: params.search ? (params.search as string) : "",
+            categoryId: Number(params.category),
+            currentPage: Number(params.currentPage),
+            sort: sort || sortList[0],
+          })
+        );
+      }
       isSearch.current = true;
     }
   }, [dispatch]);
@@ -93,11 +98,7 @@ const Home: React.FC = () => {
     isSearch.current = false;
   }, [categoryId, sort.sortProperty, searchValue, currentPage, getPizzas]);
 
-  const pizzas = items.map((obj: any) => (
-    <Link key={obj.id} to={`/pizza/${obj.id}`}>
-      <PizzaBlock {...obj} />
-    </Link>
-  ));
+  const pizzas = items.map((obj: any) => <PizzaBlock {...obj} />);
   const sceletons = [...new Array(6)].map((_, index) => (
     <Sceleton key={index} />
   ));
